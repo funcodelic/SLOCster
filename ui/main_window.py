@@ -1,19 +1,14 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget,
-    QHBoxLayout, QListWidget, QTextEdit,
-    QSplitter, QMenuBar
+    QHBoxLayout, QSplitter
 )
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QFileDialog
 from ui.app_toolbar import AppToolBar
-
-from PyQt6.QtWidgets import QTreeView
-from PyQt6.QtGui import QFileSystemModel
-
-from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QPlainTextEdit
+from ui.directory_pane import DirectoryPane
+from ui.content_pane import ContentPane
 import os
 
 class MainWindow(QMainWindow):
@@ -59,8 +54,8 @@ class MainWindow(QMainWindow):
     def _createSplitter(self):
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        self.directoryPane = self.DirectoryPane()
-        self.contentPane = self.ContentPane()
+        self.directoryPane = DirectoryPane()
+        self.contentPane = ContentPane()
 
         self.directoryPane.fileSelected.connect(self.load_file_into_content)
 
@@ -83,42 +78,6 @@ class MainWindow(QMainWindow):
                 self.contentPane.setPlainText(f.read())
         except Exception as e:
             self.contentPane.setPlainText(f"Error reading file:\n{file_path}\n\n{e}")
-
-    class DirectoryPane(QTreeView):
-        fileSelected = pyqtSignal(str) # new
-
-        def __init__(self):
-            super().__init__()
-            self.model = QFileSystemModel()
-            self.model.setRootPath("")
-            self.setModel(self.model)
-
-            self.setHeaderHidden(False)
-
-            for col in range(1, self.model.columnCount()):
-                self.hideColumn(col)
-
-            self.setRootIsDecorated(True)  # keep expand arrows
-            self.setAlternatingRowColors(False)
-            self.setSortingEnabled(False)
-
-            self.clicked.connect(self.handle_click)
-
-        def set_directory(self, path):
-            self.setRootIndex(self.model.index(path))
-
-        def handle_click(self, index):
-            path = self.model.filePath(index)
-            print(path)
-            if self.model.isDir(index):
-                return
-            self.fileSelected.emit(path)
-
-    class ContentPane(QPlainTextEdit):
-        def __init__(self):
-            super().__init__()
-            self.setStyleSheet("background-color: black; color: white;")
-            self.setPlainText("Content area")
 
 
 if __name__ == "__main__":
