@@ -1,12 +1,14 @@
 class SourceTreeScanner:
-    def __init__(self, root_path: str):
-        self.root_path = root_path
 
-    def scan(self):
-        """Return list of file paths under root_path."""
+    def scan(self, root_path: str):
         import os
+
         results = []
-        for root, dirs, files in os.walk(self.root_path):
+
+        for root, dirs, files in os.walk(root_path):
             for file in files:
-                results.append(os.path.join(root, file))
+                if file.endswith(".swift"):
+                    full_path = os.path.join(root, file)
+                    results.append(full_path)
+
         return results

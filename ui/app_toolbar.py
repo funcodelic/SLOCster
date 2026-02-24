@@ -1,19 +1,32 @@
-from PyQt6.QtWidgets import QToolBar, QFileDialog
-from PyQt6.QtGui import QAction
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QToolBar, QLabel, QWidget, QHBoxLayout
+from PyQt6.QtCore import Qt
 
 
 class AppToolBar(QToolBar):
-    directorySelected = pyqtSignal(str)
 
     def __init__(self, parent=None):
         super().__init__("Main Toolbar", parent)
 
-        open_action = QAction("Open Directory", self)
-        open_action.triggered.connect(self.open_directory)
-        self.addAction(open_action)
+        container = QWidget()
+        layout = QHBoxLayout()
+        layout.setContentsMargins(10, 0, 10, 0)
+        container.setLayout(layout)
 
-    def open_directory(self):
-        path = QFileDialog.getExistingDirectory(self, "Select Directory")
-        if path:
-            self.directorySelected.emit(path)
+        # Left label (total)
+        self.totalLabel = QLabel("Total SLOC: 0")
+        layout.addWidget(self.totalLabel)
+
+        layout.addStretch()  # pushes next widget to right side
+
+        # Right label (file)
+        self.fileLabel = QLabel("File SLOC: 0")
+        layout.addWidget(self.fileLabel)
+
+        self.addWidget(container)
+
+    # public update methods
+    def set_total_sloc(self, value: int):
+        self.totalLabel.setText(f"Total SLOC: {value}")
+
+    def set_file_sloc(self, value: int):
+        self.fileLabel.setText(f"File SLOC: {value}")
