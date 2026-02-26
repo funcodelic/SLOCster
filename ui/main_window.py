@@ -141,8 +141,8 @@ class MainWindow(QMainWindow):
 
     # Load the file to be processed
     def load_file_into_content(self, file_path: str):
-        # Only allow Swift files
-        if not file_path.lower().endswith(".swift"):
+        # Only allow Swift and python files
+        if not file_path.lower().endswith((".swift", ".py")):
             return
 
         try:

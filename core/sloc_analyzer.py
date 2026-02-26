@@ -9,7 +9,11 @@ class LineAnalysis:
     sloc_number: int | None
     text: str
 
-# Analyzes SLOC for directories and files, right now just .swift files
+# Analyzes SLOC for directories and files
+# Holds the rules as to what constitutes a true SLOC
+# Lines that are blank or single comments (// or #)
+# And lines with combinations of ()[]{};: only and no code
+# are NOT true SLOCs and are not counted
 class SlocAnalyzer:
 
     # Tally the SLOC of an entire directory, only .swift files for now
@@ -20,7 +24,7 @@ class SlocAnalyzer:
 
         for root, dirs, files in os.walk(root_path):
             for file in files:
-                if file.endswith(".swift"):
+                if file.endswith((".swift", ".py")):
                     full_path = os.path.join(root, file)
 
                     with open(full_path, "r", encoding="utf-8", errors="replace") as f:
@@ -60,7 +64,7 @@ class SlocAnalyzer:
             return False
 
         # Single-line comment
-        if stripped.startswith("//"):
+        if stripped.startswith("//") or stripped.startswith("#"):
             return False
 
         # Remove all whitespace (spaces/tabs)
