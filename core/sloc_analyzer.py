@@ -23,6 +23,18 @@ class SlocAnalyzer:
         total_sloc = 0
 
         for root, dirs, files in os.walk(root_path):
+            # Remove unwanted folders
+            dirs[:] = [
+                d for d in dirs
+                if d not in {
+                    "__pycache__",
+                    "venv",
+                    ".venv",
+                    ".idea",
+                    ".git"
+                }
+            ]
+
             for file in files:
                 if file.endswith((".swift", ".py")):
                     full_path = os.path.join(root, file)
