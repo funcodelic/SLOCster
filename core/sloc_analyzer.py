@@ -1,13 +1,18 @@
 from dataclasses import dataclass
 
+# Line-by-line analysis to maintain the line number, slock count,
+# and code alongside each other for pretty-printing.
+# Each of these entries is one line with {line no, sloc cnt, code text}
 @dataclass
 class LineAnalysis:
     line_number: int
     sloc_number: int | None
     text: str
 
+# Analyzes SLOC for directories and files, right now just .swift files
 class SlocAnalyzer:
 
+    # Tally the SLOC of an entire directory, only .swift files for now
     def analyze_directory(self, root_path: str):
         import os
 
@@ -25,6 +30,9 @@ class SlocAnalyzer:
 
         return total_sloc
 
+    # Analyze a specific file for its SLOC count
+    # The results returned is an array of {line no, sloc cnt, code}
+    # used to pretty-print the file with annotated line numbers and sloc cnt
     def analyze_file(self, file_path: str):
         results = []
         sloc_count = 0
@@ -40,16 +48,26 @@ class SlocAnalyzer:
 
         return results, sloc_count
 
+    # Returns if it's a SLOC driven by simple rules
+    # Does not account for block comments for simplicity
+    # but does ignore blank lines, comments, and
+    # combinations of " ()  []  {}  ;  : "  without any code
     def is_sloc(self, line: str) -> bool:
         stripped = line.strip()
 
+        # Blank
         if not stripped:
             return False
 
+        # Single-line comment
         if stripped.startswith("//"):
             return False
 
-        if stripped in {"{", "}"}:
+        # Remove all whitespace (spaces/tabs)
+        normalized = "".join(stripped.split())
+
+        # Pure structural line: only (), {}, []
+        if normalized and all(c in "(){}[];:" for c in normalized):
             return False
 
         return True

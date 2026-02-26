@@ -1,26 +1,18 @@
 from PyQt6.QtWidgets import QPlainTextEdit
-from PyQt6.QtGui import QFont
+from PyQt6.QtGui import QFontDatabase
 
+# Displays annotated code with line numbers and sloc count
+# alongside the code to visually verify the SLOC count for a single file
 class ContentPane(QPlainTextEdit):
     def __init__(self):
         super().__init__()
         self.setStyleSheet("background-color: black; color: white;")
         self.setPlainText("Content area")
 
-        font = QFont("Courier")
-        font.setStyleHint(QFont.StyleHint.Monospace)
+        font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)
         self.setFont(font)
 
-    def set_analysis(self, analysis):
-        self.analysis = analysis
-        self.apply_coloring()  # use ExtraSelections
-        self.update()  # repaint gutters
-
-    def apply_coloring(self):
-        # TODO: build ExtraSelections from self.analysis
-        # For now: do nothing (no coloring yet)
-        self.setExtraSelections([])
-
+    # Displays columns for line no, then SLOC count, then the code
     def build_formatted_text(self, analysis):
         lines = []
         lines.append("\n--- SLOC Analysis ---")
@@ -38,3 +30,7 @@ class ContentPane(QPlainTextEdit):
         lines.append("")  # match print newline
 
         return "\n".join(lines)
+
+    # Clears the display
+    def clear_content(self):
+        self.setPlainText("")
