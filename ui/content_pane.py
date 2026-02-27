@@ -10,6 +10,7 @@ class ContentPane(QPlainTextEdit):
         self.setPlainText("Content area")
 
         font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)
+        font.setPointSize(14)
         self.setFont(font)
 
     # Displays columns for line no, then SLOC count, then the code

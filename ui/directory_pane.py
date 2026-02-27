@@ -1,10 +1,10 @@
-# ui/directory_pane.py
-
 from PyQt6.QtWidgets import QTreeView
 from PyQt6.QtGui import QFileSystemModel
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QFontDatabase
 
-
+# Presents the directory tree structure to select files
+# to visually confirm the SLOC counting algorithm
 class DirectoryPane(QTreeView):
     fileSelected = pyqtSignal(str)
 
@@ -22,6 +22,12 @@ class DirectoryPane(QTreeView):
         # Hide all columns other than name
         for col in range(1, self.model.columnCount()):
             self.hideColumn(col)
+
+        # Increase the font size and add padding between rows
+        font = QFontDatabase.systemFont(QFontDatabase.SystemFont.FixedFont)
+        font.setPointSize(14)
+        self.setFont(font)
+        self.setStyleSheet("QTreeView::item { padding: 4px; }")
 
         # Other tweaks
         self.setRootIsDecorated(True)
